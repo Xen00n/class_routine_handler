@@ -35,82 +35,127 @@ class _ContentAdderState extends State<ContentAdder> {
       });
       successDialogeKey = 0;
     }
-    return Column(
-      children: [
-        Text("Name"),
-        TextField(
-          controller: TextEditingController.fromValue(
-            TextEditingValue(
-              text: title ?? "",
-              selection: TextSelection.collapsed(offset: (title ?? "").length),
-            ),
-          ),
-          onChanged: (value) {
-            title = value;
-          },
-        ),
-        Text("Description"),
-        TextField(
-          controller: TextEditingController.fromValue(
-            TextEditingValue(
-              text: description ?? "",
-              selection: TextSelection.collapsed(
-                offset: (description ?? "").length,
-              ),
-            ),
-          ),
-          onChanged: (value) {
-            description = value;
-          },
-        ),
-        TextButton(
-          onPressed: () async {
-            final result = await FilePicker.platform.pickFiles();
-            if (result != null) {
-              File file = File(result.files.single.path!);
-              final path = await getApplicationDocumentsDirectory();
-              String fileName = file.path.split('/').last;
-              final savedFile = await file.copy('${path.path}/$fileName');
-              filepath = savedFile.path;
-            }
-          },
-          child: Text("Upload File"),
-          // if (result != null) {,
-          // } else {
-          //   print("File picking cancelled");
-          // }
-        ),
-        ElevatedButton(
-          onPressed: () async {
-            if (filepath == null ||
-                title == null ||
-                description == null ||
-                filepath == "" ||
-                title == "" ||
-                description == "") {
-              setState(() {
-                errorDialogeKey = 1;
-              });
-            } else {
-              await DataService().addContent(
-                widget.subjectName,
-                Content(
-                  title: title!,
-                  filepath: filepath!,
-                  description: description!,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Title", style: TextStyle(fontSize: 30)),
+          SizedBox(
+            width: 600,
+            child: TextField(
+              style: TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              );
-              setState(() {
-                title = null;
-                description = null;
-                filepath = null;
-                successDialogeKey = 1;
-              });
-            }
-          },
-          child: Text("Add"),
-        ),
-      ],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: "Enter Title",
+              ),
+              controller: TextEditingController.fromValue(
+                TextEditingValue(
+                  text: title ?? "",
+                  selection: TextSelection.collapsed(
+                    offset: (title ?? "").length,
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                title = value;
+              },
+            ),
+          ),
+          Text("Description", style: TextStyle(fontSize: 30)),
+          SizedBox(
+            width: 600,
+            height: 300,
+            child: TextField(
+              maxLines: 18,
+              style: TextStyle(fontSize: 20),
+              decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                hintText: "Enter Title",
+              ),
+              controller: TextEditingController.fromValue(
+                TextEditingValue(
+                  text: description ?? "",
+                  selection: TextSelection.collapsed(
+                    offset: (description ?? "").length,
+                  ),
+                ),
+              ),
+              onChanged: (value) {
+                description = value;
+              },
+            ),
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              textStyle: const TextStyle(fontSize: 20),
+            ),
+            onPressed: () async {
+              final result = await FilePicker.platform.pickFiles();
+              if (result != null) {
+                File file = File(result.files.single.path!);
+                final path = await getApplicationDocumentsDirectory();
+                String fileName = file.path.split('/').last;
+                final savedFile = await file.copy('${path.path}/$fileName');
+                filepath = savedFile.path;
+              }
+            },
+            child: Text("Upload File", style: TextStyle(fontSize: 20)),
+            // if (result != null) {,
+            // } else {
+            //   print("File picking cancelled");
+            // }
+          ),
+          SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              textStyle: const TextStyle(fontSize: 20),
+            ),
+            onPressed: () async {
+              if (filepath == null ||
+                  title == null ||
+                  description == null ||
+                  filepath == "" ||
+                  title == "" ||
+                  description == "") {
+                setState(() {
+                  errorDialogeKey = 1;
+                });
+              } else {
+                await DataService().addContent(
+                  widget.subjectName,
+                  Content(
+                    title: title!,
+                    filepath: filepath!,
+                    description: description!,
+                  ),
+                );
+                setState(() {
+                  title = null;
+                  description = null;
+                  filepath = null;
+                  successDialogeKey = 1;
+                });
+              }
+            },
+            child: Text("Add", style: TextStyle(fontSize: 30)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -127,21 +172,30 @@ class _ErrorDialogeState extends State<ErrorDialoge> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Error Occurred"),
-            SizedBox(height: 10),
-            Text("Please fill all the fields and try again."),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
+        padding: const EdgeInsets.all(10.0),
+        child: SizedBox(
+          height: 200,
+          width: 300,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text("Error Occurred", style: TextStyle(fontSize: 20)),
+                SizedBox(height: 30),
+                Text(
+                  "Please fill all the fields and try again.",
+                  style: TextStyle(fontSize: 15),
+                ),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -160,21 +214,33 @@ class _SuccessDialoge extends State<SuccessDialoge> {
   Widget build(BuildContext context) {
     return Dialog(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text("Successfully added content"),
-            SizedBox(height: 10),
-            Text("Your content is added successfully."),
-            SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("OK"),
+        padding: const EdgeInsets.all(10.0),
+        child: SizedBox(
+          height: 200,
+          width: 400,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Successfully added content",
+                  style: TextStyle(fontSize: 20),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "Your content is added successfully.",
+                  style: TextStyle(fontSize: 15),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text("OK"),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
