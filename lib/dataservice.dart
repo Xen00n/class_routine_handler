@@ -49,6 +49,5 @@ class DataService {
     final allContents = await loadAllContents();
     allContents[subject]?.add(content);
     await saveAllContents(allContents);
-    print("successfully added content to $subject");
   }
 }

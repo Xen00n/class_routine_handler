@@ -126,10 +126,11 @@ class _ContentAdderState extends State<ContentAdder> {
               textStyle: const TextStyle(fontSize: 20),
             ),
             onPressed: () async {
-              if (filepath == null ||
-                  title == null ||
+              if (filepath == null || filepath == "") {
+                filepath = "_nofile_";
+              }
+              if (title == null ||
                   description == null ||
-                  filepath == "" ||
                   title == "" ||
                   description == "") {
                 setState(() {

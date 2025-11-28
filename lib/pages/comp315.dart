@@ -1,7 +1,7 @@
-import 'dart:io';
+import 'package:class_routine_handler/widgets/contentadder.dart';
+import 'package:class_routine_handler/widgets/contentloader.dart';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Comp315Page extends StatefulWidget {
   const Comp315Page({super.key});
@@ -11,39 +11,36 @@ class Comp315Page extends StatefulWidget {
 }
 
 class _Comp315PageState extends State<Comp315Page> {
+  int selectedIndex = 0;
+  dynamic contents;
+  String subject = "comp315";
+
+  final String subjectName = "comp315";
   @override
   Widget build(BuildContext context) {
-    return ImageLoader();
-  }
-}
-
-class ImageLoader extends StatefulWidget {
-  const ImageLoader({super.key});
-
-  @override
-  State<ImageLoader> createState() => _ImageLoaderState();
-}
-
-class _ImageLoaderState extends State<ImageLoader> {
-  bool fileFound = false;
-  String? imagePath = "";
-  @override
-  Widget build(BuildContext context) {
-    switch (fileFound) {
-      case true:
-        return Image.file(File(imagePath!));
+    Widget currentWidget = ContentLoader(subject: subject);
+    switch (selectedIndex) {
+      case 0:
+        currentWidget = ContentLoader(subject: subject);
+        break;
+      case 1:
+        currentWidget = ContentAdder(subjectName: subjectName);
+        break;
       default:
-        return TextButton(
-          onPressed: () async {
-            final prefs = await SharedPreferences.getInstance();
-            imagePath = prefs.getString('saved_image');
-            //print("path: $imagePath");
-            setState(() {
-              fileFound = true;
-            });
-          },
-          child: Text("Load Image"),
-        );
+        currentWidget = ContentLoader(subject: subject);
     }
+    return Scaffold(
+      body: currentWidget,
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: (value) => setState(() {
+          selectedIndex = value;
+        }),
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Contents'),
+          BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Add Content'),
+        ],
+        currentIndex: selectedIndex,
+      ),
+    );
   }
 }
