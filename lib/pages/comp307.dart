@@ -13,9 +13,8 @@ class Comp307Page extends StatefulWidget {
 class _Comp307PageState extends State<Comp307Page> {
   int selectedIndex = 0;
   dynamic contents;
-  String subject = "comp307";
+  final String subject = "comp307";
 
-  final String subjectName = "comp307";
   @override
   Widget build(BuildContext context) {
     Widget currentWidget = ContentLoader(subject: subject);
@@ -24,7 +23,7 @@ class _Comp307PageState extends State<Comp307Page> {
         currentWidget = ContentLoader(subject: subject);
         break;
       case 1:
-        currentWidget = ContentAdder(subjectName: subjectName);
+        currentWidget = ContentAdder(subjectName: subject);
         break;
       default:
         currentWidget = ContentLoader(subject: subject);

@@ -13,9 +13,8 @@ class CoegPage extends StatefulWidget {
 class _CoegPageState extends State<CoegPage> {
   int selectedIndex = 0;
   dynamic contents;
-  String subject = "coeg";
+  final String subject = "coeg";
 
-  final String subjectName = "coeg";
   @override
   Widget build(BuildContext context) {
     Widget currentWidget = ContentLoader(subject: subject);
@@ -24,7 +23,7 @@ class _CoegPageState extends State<CoegPage> {
         currentWidget = ContentLoader(subject: subject);
         break;
       case 1:
-        currentWidget = ContentAdder(subjectName: subjectName);
+        currentWidget = ContentAdder(subjectName: subject);
         break;
       default:
         currentWidget = ContentLoader(subject: subject);

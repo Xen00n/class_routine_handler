@@ -13,9 +13,7 @@ class ProjectPage extends StatefulWidget {
 class _ProjectPageState extends State<ProjectPage> {
   int selectedIndex = 0;
   dynamic contents;
-  String subject = "project";
-
-  final String subjectName = "project";
+  final String subject = "project";
   @override
   Widget build(BuildContext context) {
     Widget currentWidget = ContentLoader(subject: subject);
@@ -24,7 +22,7 @@ class _ProjectPageState extends State<ProjectPage> {
         currentWidget = ContentLoader(subject: subject);
         break;
       case 1:
-        currentWidget = ContentAdder(subjectName: subjectName);
+        currentWidget = ContentAdder(subjectName: subject);
         break;
       default:
         currentWidget = ContentLoader(subject: subject);
