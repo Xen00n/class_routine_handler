@@ -22,140 +22,148 @@ class _ContentAdderState extends State<ContentAdder> {
   Widget successDialoge = SuccessDialoge();
   int errorDialogeKey = 0;
   int successDialogeKey = 0;
+
   @override
   Widget build(BuildContext context) {
     if (errorDialogeKey == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(context: context, builder: (context) => errorDialoge);
+        showDialog(context: context, builder: (_) => errorDialoge);
       });
       errorDialogeKey = 0;
     } else if (successDialogeKey == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog(context: context, builder: (context) => successDialoge);
+        showDialog(context: context, builder: (_) => successDialoge);
       });
       successDialogeKey = 0;
     }
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("Title", style: TextStyle(fontSize: 30)),
-          SizedBox(
-            width: 600,
-            child: TextField(
-              style: TextStyle(fontSize: 20),
-              decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: "Enter Title",
-              ),
-              controller: TextEditingController.fromValue(
-                TextEditingValue(
-                  text: title ?? "",
-                  selection: TextSelection.collapsed(
-                    offset: (title ?? "").length,
+
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.subjectName)),
+
+      body: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Title", style: TextStyle(fontSize: 30)),
+              SizedBox(
+                width: 600,
+                child: TextField(
+                  style: TextStyle(fontSize: 20),
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    hintText: "Enter Title",
                   ),
-                ),
-              ),
-              onChanged: (value) {
-                title = value;
-              },
-            ),
-          ),
-          Text("Description", style: TextStyle(fontSize: 30)),
-          SizedBox(
-            width: 600,
-            height: 300,
-            child: TextField(
-              maxLines: 18,
-              style: TextStyle(fontSize: 20),
-              decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                hintText: "Enter Title",
-              ),
-              controller: TextEditingController.fromValue(
-                TextEditingValue(
-                  text: description ?? "",
-                  selection: TextSelection.collapsed(
-                    offset: (description ?? "").length,
+                  controller: TextEditingController.fromValue(
+                    TextEditingValue(
+                      text: title ?? "",
+                      selection: TextSelection.collapsed(
+                        offset: (title ?? "").length,
+                      ),
+                    ),
                   ),
+                  onChanged: (value) => title = value,
                 ),
               ),
-              onChanged: (value) {
-                description = value;
-              },
-            ),
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-              textStyle: const TextStyle(fontSize: 20),
-            ),
-            onPressed: () async {
-              final result = await FilePicker.platform.pickFiles();
-              if (result != null) {
-                File file = File(result.files.single.path!);
-                final path = await getApplicationDocumentsDirectory();
-                String fileName = file.path.split('/').last;
-                final savedFile = await file.copy('${path.path}/$fileName');
-                filepath = savedFile.path;
-              }
-            },
-            child: Text("Upload File", style: TextStyle(fontSize: 20)),
-            // if (result != null) {,
-            // } else {
-            //   print("File picking cancelled");
-            // }
-          ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-              textStyle: const TextStyle(fontSize: 20),
-            ),
-            onPressed: () async {
-              if (filepath == null || filepath == "") {
-                filepath = "_nofile_";
-              }
-              if (title == null ||
-                  description == null ||
-                  title == "" ||
-                  description == "") {
-                setState(() {
-                  errorDialogeKey = 1;
-                });
-              } else {
-                await DataService().addContent(
-                  widget.subjectName,
-                  Content(
-                    title: title!,
-                    filepath: filepath!,
-                    description: description!,
+
+              SizedBox(height: 20),
+              Text("Description", style: TextStyle(fontSize: 30)),
+              SizedBox(
+                width: 600,
+                height: 200,
+                child: TextField(
+                  maxLines: 18,
+                  style: TextStyle(fontSize: 20),
+                  decoration: InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    hintText: "Enter Description",
                   ),
-                );
-                setState(() {
-                  title = null;
-                  description = null;
-                  filepath = null;
-                  successDialogeKey = 1;
-                });
-              }
-            },
-            child: Text("Add", style: TextStyle(fontSize: 30)),
+                  controller: TextEditingController.fromValue(
+                    TextEditingValue(
+                      text: description ?? "",
+                      selection: TextSelection.collapsed(
+                        offset: (description ?? "").length,
+                      ),
+                    ),
+                  ),
+                  onChanged: (value) => description = value,
+                ),
+              ),
+
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50,
+                    vertical: 20,
+                  ),
+                  textStyle: const TextStyle(fontSize: 20),
+                ),
+                onPressed: () async {
+                  final result = await FilePicker.platform.pickFiles();
+                  if (result != null) {
+                    File file = File(result.files.single.path!);
+                    final path = await getApplicationDocumentsDirectory();
+                    String fileName = file.path.split('/').last;
+                    final savedFile = await file.copy('${path.path}/$fileName');
+                    filepath = savedFile.path;
+                  }
+                },
+                child: Text("Upload File", style: TextStyle(fontSize: 20)),
+              ),
+
+              SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 50,
+                    vertical: 20,
+                  ),
+                  textStyle: const TextStyle(fontSize: 30),
+                ),
+                onPressed: () async {
+                  if (filepath == null || filepath == "") {
+                    filepath = "_nofile_";
+                  }
+                  if (title == null ||
+                      description == null ||
+                      title == "" ||
+                      description == "") {
+                    setState(() => errorDialogeKey = 1);
+                  } else {
+                    await DataService().addContent(
+                      widget.subjectName,
+                      Content(
+                        title: title!,
+                        filepath: filepath!,
+                        description: description!,
+                      ),
+                    );
+                    setState(() {
+                      title = null;
+                      description = null;
+                      filepath = null;
+                      successDialogeKey = 1;
+                    });
+                  }
+                },
+                child: Text("Add"),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

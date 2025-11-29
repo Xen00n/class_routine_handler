@@ -1,3 +1,4 @@
+import 'package:class_routine_handler/widgets/calendar.dart';
 import 'package:class_routine_handler/widgets/contentadder.dart';
 import 'package:class_routine_handler/widgets/contentloader.dart';
 
@@ -17,14 +18,16 @@ class _Comp301PageState extends State<Comp301Page> {
 
   @override
   Widget build(BuildContext context) {
-    Widget currentWidget = ContentLoader(subject: subject);
+    Widget currentWidget = CalendarPage();
     switch (selectedIndex) {
-      case 0:
+      case 1:
         currentWidget = ContentLoader(subject: subject);
         break;
-      case 1:
+      case 2:
         currentWidget = ContentAdder(subjectName: subject);
         break;
+      case 0:
+        currentWidget = CalendarPage();
       default:
         currentWidget = ContentLoader(subject: subject);
     }
@@ -35,6 +38,10 @@ class _Comp301PageState extends State<Comp301Page> {
           selectedIndex = value;
         }),
         items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Contents'),
           BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Add Content'),
         ],

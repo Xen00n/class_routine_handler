@@ -9,7 +9,9 @@ import 'package:path/path.dart' as p;
 class ContentLoader extends StatefulWidget {
   final String subject;
   final DataService dataService = DataService();
+
   ContentLoader({super.key, required this.subject});
+
   @override
   State<ContentLoader> createState() => _ContentLoaderState();
 }
@@ -17,24 +19,36 @@ class ContentLoader extends StatefulWidget {
 class _ContentLoaderState extends State<ContentLoader> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: widget.dataService.loadAllContents(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final contents = snapshot.data![widget.subject]!;
-          return ListView.builder(
-            itemBuilder: (context, index) {
-              return ContentCard(contents: contents[index]);
-            },
-            itemCount: contents.length,
-          );
-        } else {
-          if (snapshot.hasError) {
-            return Text("Error: ${snapshot.error}");
+    return Scaffold(
+      appBar: AppBar(title: Text(widget.subject)),
+
+      body: FutureBuilder(
+        future: widget.dataService.loadAllContents(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final contents = snapshot.data![widget.subject]!;
+            if (contents.isEmpty) {
+              return Center(
+                child: Text(
+                  "No content available",
+                  style: TextStyle(fontSize: 20),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              itemBuilder: (context, index) {
+                return ContentCard(contents: contents[index]);
+              },
+              itemCount: contents.length,
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Error: ${snapshot.error}"));
           }
-          return const CircularProgressIndicator();
-        }
-      },
+
+          return const Center(child: CircularProgressIndicator());
+        },
+      ),
     );
   }
 }
@@ -57,17 +71,17 @@ class _ContentCardState extends State<ContentCard> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 14.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Title: ", style: TextStyle(fontSize: 20)),
-                  Text(widget.contents.title, style: TextStyle(fontSize: 20)),
-                ],
-              ),
+            const SizedBox(height: 14),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("Title: ", style: TextStyle(fontSize: 20)),
+                Text(widget.contents.title, style: TextStyle(fontSize: 20)),
+              ],
             ),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -75,10 +89,13 @@ class _ContentCardState extends State<ContentCard> {
                 Text(
                   widget.contents.description,
                   style: TextStyle(fontSize: 20),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
-            SizedBox(height: 20),
+
+            const SizedBox(height: 20),
+
             FileShower(filePath: widget.contents.filepath),
           ],
         ),
@@ -101,13 +118,12 @@ class _FileShowerState extends State<FileShower> {
     if (widget.filePath == "_nofile_") {
       return Text("No File Attached", style: TextStyle(fontSize: 20));
     }
+
     String ext = p.extension(widget.filePath).toLowerCase();
     final file = File(widget.filePath);
-    if (ext == ".jpg" ||
-        ext == ".jpeg" ||
-        ext == ".png" ||
-        ext == ".gif" ||
-        ext == ".bmp") {
+
+    // Image preview
+    if ([".jpg", ".jpeg", ".png", ".gif", ".bmp"].contains(ext)) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
@@ -122,12 +138,18 @@ class _FileShowerState extends State<FileShower> {
           child: Image.file(file, height: 120, width: 120, fit: BoxFit.cover),
         ),
       );
-    } else if (ext == ".mp4" || ext == ".mov" || ext == ".avi") {
+    }
+
+    // Video
+    if ([".mp4", ".mov", ".avi"].contains(ext)) {
       return Text(
         "Video File: ${widget.filePath}",
         style: TextStyle(fontSize: 20),
       );
-    } else if (ext == ".pdf") {
+    }
+
+    // PDF
+    if (ext == ".pdf") {
       String fileName = p.basename(widget.filePath);
       return Padding(
         padding: const EdgeInsets.only(bottom: 15.0),
@@ -138,18 +160,17 @@ class _FileShowerState extends State<FileShower> {
           child: Text("Open $fileName", style: TextStyle(fontSize: 20)),
         ),
       );
-    } else {
-      return Text(
-        "Invalid or Unsupported File Type",
-        style: TextStyle(fontSize: 20),
-      );
     }
+
+    return Text(
+      "Invalid or Unsupported File Type",
+      style: TextStyle(fontSize: 20),
+    );
   }
 }
 
 class FullScreenImage extends StatelessWidget {
   final String imagePath;
-
   const FullScreenImage({super.key, required this.imagePath});
 
   @override

@@ -40,3 +40,31 @@ class Subject {
         .toList(),
   );
 }
+
+class Event {
+  String id;
+  String title;
+  String? description;
+  DateTime date;
+
+  Event({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.date,
+  });
+
+  factory Event.fromJson(Map<String, dynamic> json) => Event(
+    id: json['id'],
+    title: json['title'],
+    description: json['description'],
+    date: DateTime.parse(json['date']),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "title": title,
+    "description": description,
+    "date": date.toIso8601String(),
+  };
+}
